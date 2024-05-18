@@ -683,12 +683,12 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 	}
 
 	const handleMessage = async(node: BinaryNode) => {
-		if(shouldIgnoreJid(msg.key.remoteJid!) && msg.key.remoteJid! !== '@s.whatsapp.net') {
-			logger.debug({ key: msg.key }, 'ignored message')
+		const remoteJid = node.attrs.from
+		if(shouldIgnoreJid(remoteJid) && remoteJid !== '@s.whatsapp.net') {
+			logger.debug({ remoteJid, id: node.attrs.id }, 'ignored message')
 			await sendMessageAck(node)
 			return
 		}
-
 		const { fullMessage: msg, category, author, decrypt } = decryptMessageNode(
 			node,
 			authState.creds.me!.id,
