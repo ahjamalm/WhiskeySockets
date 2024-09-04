@@ -595,8 +595,8 @@ export function extensionForMediaMessage(message: WAMessageContent) {
 
 	return extension
 }
-const streamToBuffer = async (stream) => {
-    const chunks = [];
+const streamToBuffer = async (stream: NodeJS.ReadableStream): Promise<Buffer> => {
+    const chunks: Uint8Array[] = [];
     for await (const chunk of stream) {
         chunks.push(chunk);
     }
