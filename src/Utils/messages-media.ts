@@ -595,6 +595,13 @@ export function extensionForMediaMessage(message: WAMessageContent) {
 
 	return extension
 }
+const streamToBuffer = async (stream) => {
+    const chunks = [];
+    for await (const chunk of stream) {
+        chunks.push(chunk);
+    }
+    return Buffer.concat(chunks);
+};
 
 export const getWAUploadToServer = (
 	{ customUploadHosts, fetchAgent, logger, options }: SocketConfig,
@@ -606,7 +613,7 @@ export const getWAUploadToServer = (
 
 		let urls: { mediaUrl: string, directPath: string } | undefined
 		const hosts = [ ...customUploadHosts, ...uploadInfo.hosts ]
-
+       		const streamBuffer = await streamToBuffer(stream);
 		fileEncSha256B64 = encodeBase64EncodedStringForUpload(fileEncSha256B64)
 
 		for(const { hostname } of hosts) {
@@ -619,7 +626,7 @@ export const getWAUploadToServer = (
 
 				const body = await axios.post(
 					url,
-					stream,
+					streamBuffer,
 					{
 						...options,
 						headers: {
